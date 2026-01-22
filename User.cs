@@ -47,11 +47,11 @@ public class User
     ///<summary>
     ///Constructor for User class. Creates a new user and adds it to the list of users.
     ///</summary>
-    public User(string userName, string password)
+    public User(string userName, string password, bool isAdmin = false)
     {
       UserName = userName;
       Password = password;
-      IsAdmin = false;
+      IsAdmin = isAdmin;
       Users.Add(this);
     }
 
