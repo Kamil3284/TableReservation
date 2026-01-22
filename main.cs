@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-class Program {
+partial class Program {
   public static void Main (string[] args) {
     Table.AddTable(4);
     Table.AddTable(8);
@@ -9,11 +9,17 @@ class Program {
     Table.AddTable(6);
     Table.AddTable(10);
     Table.AddTable(12);
-    Console.WriteLine("Łącznie jest {0} stolików.",Table.NumberOfTables(Table.Tables));
-    Reservation reservation = new Reservation(Table.FreeTables[0], 4, "John Doe");
-    Console.WriteLine($"Łącznie jest {Table.NumberOfTables(Table.Tables)} stolików.");
-    Console.WriteLine($"Wolnych{Table.NumberOfTables(Table.FreeTables)}");
-    Console.WriteLine($"Zarezerwowanych{Table.NumberOfTables(Table.ReservedTables)}");
-    Reservation.ShowReservations();
+    Reservation reservation = new Reservation(Table.FreeTables[0], new DateOnly(2026,12,5), new TimeOnly(13,20,0), 10, "Marek Bredow");
+    Reservation reservation2 = new Reservation(Table.FreeTables[0], new DateOnly(2027,2,27), new TimeOnly(19,10,0), 2, "Piotr Winter");
+    User user = new User("user", "user");
+    AdminUser admin = new AdminUser("admin", "admin");
+ Menu.LoginMenu();
+    
+    //TO DO:
+    //Dodać wczytywanie danych z pliku, jak i zapisywanie ich do pliku.
+    //Dodać możliwość edycji rezerwacji.
+    //Dodać możliwość edycji stolików.
+    //Dodać możliwość edycji użytkowników.
+    
   }
 }

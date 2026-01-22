@@ -1,37 +1,248 @@
 using System;
 using System.Collections.Generic;
 
-public class Reservation{
-  private DateTime TimeOfReservation{get;set;}
-  private Table Table{get;set;}
-  private int NumberOfPeople{get;set;}
-  private string NameOfReserver{get;set;}
-  public static List<Reservation> Reservations = new List<Reservation>();
-  
-  public Reservation(Table table, int numberOfPeople, string nameOfReserver){
-    TimeOfReservation = DateTime.Now;
-    Table = table;
-    NumberOfPeople = numberOfPeople;
-    NameOfReserver = nameOfReserver;
-    Table.MoveTable(table, Table.FreeTables, Table.ReservedTables);
-    Reservations.Add(this);
-  }
+public class Reservation
+{
+    private DateTime TimeOfReservation { get; set; } //Time when the reservation was made
+    private DateOnly ReservationDay { get; set; } //Day of the reservation
+    private TimeOnly ReservationTime { get; set; } //Day of the reservation
+    private Table T { get; set; } //Table class object
+    private int NumberOfPeople { get; set; } //Number of people in the reservation
+    private string NameOfReserver { get; set; } //Person who made the reservation
+    public static List<Reservation> Reservations {get; private set;} = new List<Reservation>(); //List of all reservations
 
-  public static void CancelReservation(Reservation reservation)
-  {
-    Table.MoveTable(reservation.Table, Table.ReservedTables, Table.FreeTables);
-    Reservations.Remove(reservation);
-  }
-
-  public static void ShowReservations()
-  {
-    foreach(var r in Reservations)
+    ///<summary>
+    ///Constructor of the Reservation class. Creates new Reservation object.
+    ///</summary>
+    public Reservation()
     {
-      Console.WriteLine($"Zarezerwowany stolik: {r.Table}, dla {r.NumberOfPeople} osób, przez {r.NameOfReserver} o {r.TimeOfReservation}");
+        Console.WriteLine("Na jaki dzień chcesz zarezerwować stolik? (DD/MM/YYYY)");
+        //TODO:
+        //Usprawnić, aby nie można było zarezerwować stolika na godzinę, która już minęła, oraz sprawdzić, czy wpisane dane są poprawne. 
+        while(ReservationDay == DateOnly.MinValue)
+        {
+            try
+            {
+                ReservationDay = DateOnly.ParseExact(Console.ReadLine(), "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
+            }
+            catch
+            {
+                Console.WriteLine("Podano niepoprawną datę.");
+            }
+        }
+        //TODO:
+        //Usprawnić, aby nie można było zarezerwować stolika na godzinę, która już minęła, oraz sprawdzić, czy wpisane dane są poprawne. 
+        while(ReservationTime == TimeOnly.MinValue)
+        {
+            try
+            {
+                Console.WriteLine("Na którą godzinę chcesz zarezerwować stolik? (HH:MM)");
+                ReservationTime = TimeOnly.ParseExact(Console.ReadLine(), "HH:mm", System.Globalization.CultureInfo.InvariantCulture);
+            }
+            catch
+            {
+                Console.WriteLine("Podano niepoprawną godzinę.");
+
+            }
+        }
+
+        TimeOfReservation = DateTime.Now;
+        Console.WriteLine("Na ile osób chcesz zarezerwować stolik?");
+        NumberOfPeople = Convert.ToInt32(Console.ReadLine());
+        Console.WriteLine("Podaj swoje imię i nazwisko.");
+        NameOfReserver = Console.ReadLine();
+        Console.WriteLine("Wybierz stolik z listy proponowanych stolików:");
+        for (int i = 0; i < Table.FreeTables.Count; i++)
+        {
+            if (Table.GetSeats(Table.FreeTables[i]) >= NumberOfPeople)
+            {
+                int counter = i + 1;
+                Console.WriteLine($"{counter}.{Table.GetSeats(Table.FreeTables[i])} osobowy");
+            }
+        }
+        int tableNumber;
+        while (!int.TryParse(Console.ReadLine(), out tableNumber) || tableNumber < 1 || tableNumber > Table.FreeTables.Count)
+        {
+            Console.WriteLine("Podano niepoprawny numer stolika. Spróbuj ponownie:");
+        }
+        tableNumber--;
+        T = Table.FreeTables[tableNumber];
+        Table.MoveTable(T, Table.FreeTables, Table.ReservedTables);
+        Reservations.Add(this);
+        Console.WriteLine("Rezerwacja została wykonana pomyślnie.");
+        Table.ReserveTable(T);
     }
-  }
+
+    ///<summary>
+    ///Constructor of the Reservation class. Creates new Reservation object.
+    ///</summary>
+    public Reservation(Table table, DateOnly reservationDay, TimeOnly reservationTime, int numberOfPeople, string nameOfReserver)
+    {
+        TimeOfReservation = DateTime.Now;
+        ReservationDay = reservationDay;
+        ReservationTime = reservationTime;
+        T = table;
+        NumberOfPeople = numberOfPeople;
+        NameOfReserver = nameOfReserver;
+        Table.MoveTable(table, Table.FreeTables, Table.ReservedTables);
+        Reservations.Add(this);
+        Table.ReserveTable(table);
+        Console.WriteLine("Rezerwacja została wykonana pomyślnie.");
+    }
+    ///<summary>
+    ///Edits existing reservation.
+    ///</summary>
+    public static void EditReservation()
+    {
+        if (Reservations.Count == 0)
+        {
+            Console.WriteLine("Brak rezerwacji do edycji.\n");
+        }
+        else
+        {
+            Reservation.ShowReservations();
+            Console.WriteLine("Którą rezerwację chcesz edytować?");
+            int userInput = Convert.ToInt32(Console.ReadLine());
+            Reservation reservation = Reservation.Reservations[userInput - 1];
+            ReservationEditMenu(reservation);
+            
+        }
+    }
+
+    
+    private static void ReservationEditMenu(Reservation reservation)
+    {
+        Console.WriteLine("Co chcesz edytować?");
+        Console.WriteLine("1. Datę rezerwacji");
+        Console.WriteLine("2. Godzinę rezerwacji");
+        Console.WriteLine("3. Liczbę osób");
+        Console.WriteLine("4. Stolik");
+        Console.WriteLine("5. Anuluj edycję");
+        int userInput = Convert.ToInt32(Console.ReadLine());
+        switch(userInput)
+        {
+        case 1:
+            {
+                Console.WriteLine("Podaj nową datę rezerwacji (DD/MM/YYYY)");
+                tryAgain:
+                try
+                {
+                    reservation.ReservationDay = DateOnly.ParseExact(Console.ReadLine(), "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
+                }
+                catch
+                {
+                    Console.WriteLine("Podano niepoprawną datę.");
+                    goto tryAgain;
+                }
+                break;
+            }
+        case 2:
+            {
+                Console.WriteLine("Podaj nową godzinę rezerwacji (HH:MM)");
+                tryAgain:
+                try
+                {
+                    reservation.ReservationTime = TimeOnly.ParseExact(Console.ReadLine(), "HH:mm", System.Globalization.CultureInfo.InvariantCulture);
+                }
+                catch
+                {
+                    Console.WriteLine("Podano niepoprawną godzinę.");
+                    goto tryAgain;
+                }
+                break;
+            }
+        case 3:
+            {
+                Console.WriteLine("Podaj nową liczbę osób");
+                reservation.NumberOfPeople = Convert.ToInt32(Console.ReadLine());
+                break;
+            }
+        case 4:
+            {
+                Console.WriteLine("Wybierz nowy stolik z listy proponowanych stolików:");
+                for (int i = 0; i < Table.FreeTables.Count; i++)
+                {
+                    if (Table.GetSeats(Table.FreeTables[i]) >= reservation.NumberOfPeople)
+                    {
+                        int counter = i + 1;
+                        Console.WriteLine($"{counter}.{Table.GetSeats(Table.FreeTables[i])} osobowy");
+                    }
+                }
+        int tableNumber;
+        while (!int.TryParse(Console.ReadLine(), out tableNumber) || tableNumber < 1 || tableNumber > Table.FreeTables.Count)
+        {
+            Console.WriteLine("Podano niepoprawny numer stolika. Spróbuj ponownie:");
+        }
+        tableNumber--;
+        int oldTableIndex = Table.Tables.IndexOf(reservation.T);
+        reservation.T = Table.FreeTables[tableNumber];
+        Table.MoveTable(reservation.T, Table.FreeTables, Table.ReservedTables);
+        Table.ReserveTable(reservation.T);
+        Table.FreeTable(Table.Tables[oldTableIndex]);
+        break;
+    }
+        case 5:
+            {
+                Menu.BackToMenu();
+                break;
+            }
+        default:
+            {
+                Console.WriteLine("Podano niepoprawną opcję.");
+                ReservationEditMenu(reservation);
+                break;
+            }          
+        }
+    }
 
 
+    
+    public static void AddReservation()
+    {
+        Reservation reservation = new Reservation();
+    }
+    
+    ///<summary>
+    ///Removes a reservation from the list of reservations.
+    ///</summary>
+    public static void CancelReservation()
+    {
+        if (Reservations.Count == 0)
+        {
+            Console.WriteLine("Brak rezerwacji do anulowania.\n");
+        
+        }
+        else
+        {
+            Reservation.ShowReservations();
+            Console.WriteLine("Którą rezerwację chcesz anulować?");
+            int userInput = Convert.ToInt32(Console.ReadLine());
+            Reservation reservation = Reservation.Reservations[userInput - 1];
+            Table.MoveTable(reservation.T, Table.ReservedTables, Table.FreeTables);
+            Reservations.Remove(reservation);
+            Table.FreeTable(reservation.T);
+            Console.WriteLine("Rezerwacja została anulowana.\n");
+            
+        }
+    }
 
-  
+    ///<summary>
+    ///Shows all reservations.
+    ///</summary>
+    public static void ShowReservations()
+    {
+        if (Reservations.Count == 0)
+        {
+            Console.WriteLine("Brak rezerwacji.");
+        }
+        else
+        {
+            for (int i = 0; i < Reservations.Count; i++)
+            {
+                int counter = i + 1;
+                Reservation r = Reservations[i];
+                Console.WriteLine($"Rezerwacja numer {counter}:\nLiczba osób: {r.NumberOfPeople}\nZarezerwowany stolik: {Table.GetSeats(r.T)} osobowy, \nWybrana data i godzina: {r.ReservationDay.ToString("g")} {r.ReservationTime.ToString("t")} \nOsoba rezerwująca: {r.NameOfReserver} \nCzas wykonania rezerwacji: {r.TimeOfReservation.ToString("g")}.\n");
+            }
+        }
+    }
 }

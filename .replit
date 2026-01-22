@@ -17,3 +17,29 @@ channel = "stable-24_05"
 [deployment]
 run = ["dotnet", "run"]
 deploymentTarget = "cloudrun"
+
+[agent]
+expertMode = true
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "App Workflow (Console)"
+
+[[workflows.workflow]]
+name = "App Workflow (Console)"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "dotnet run"
+
+[workflows.workflow.metadata]
+outputType = "console"
