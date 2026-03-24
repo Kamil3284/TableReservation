@@ -10,7 +10,7 @@ partial class Program {
     Table.AddTable(8);
     Table.AddTable(10);
     Table.AddTable(12);
-    Console.WriteLine(Table.ShowAllTables(Table.Tables));
+    Table.ShowAllTables(Table.Tables);
     Reservation reservation = new Reservation(Table.FreeTables[0], new DateOnly(2026,12,5), new TimeOnly(13,20,0), 10, "Marek Bredow");
     Reservation reservation2 = new Reservation(Table.FreeTables[0], new DateOnly(2027,2,27), new TimeOnly(19,10,0), 2, "Piotr Zimowski");
     User user = new User("user", "user");

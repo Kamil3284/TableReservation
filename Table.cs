@@ -115,7 +115,7 @@ public class Table
     public static void RemoveTableCompletely()
     {
         Console.WriteLine("Który stolik chcesz usunąć? Uwaga! Stolik zostanie trwale usunięty!");
-        Console.WriteLine(ShowAllTables(Tables));
+        ShowAllTables(Tables);
         int tableNumber = Convert.ToInt32(Console.ReadLine()) - 1;
         RemoveTableCompletely(Tables[tableNumber]);
         Console.WriteLine("Stolik został usunięty.");
@@ -135,25 +135,24 @@ public class Table
     ///<summary>
     ///Shows all tables in the given list
     ///</summary>
-    public static string ShowAllTables(List<Table> tables)
+    public static void ShowAllTables(List<Table> tables)
     {
         if (tables.Count == 0)
         {
-            return "Brak stolików.";
+            Console.WriteLine("Brak stolików.");
         }
         else if (tables.Count == 1)
         {
-            return " jest " + tables.Count + " stolik. \n" + tables[0].Seats + " osobowy";
+            Console.WriteLine("Jest " + tables.Count + " stolik:\n" + tables[0].Seats + " osobowy");
         }
         else if (tables.Count > 1 && tables.Count < 5)
         {
-            return string.Format(" są {0} stoliki.\n{1}", tables.Count, ListTables(tables));
+            Console.WriteLine("Są {0} stoliki:\n{1}", tables.Count, ListTables(tables));
         }
         else
         {
-            return $" jest {tables.Count} stolików.\n{ListTables(tables)}";
+            Console.WriteLine("Jest {0} stolików:\n{1}", tables.Count, ListTables(tables));
         }
-
     }
 
   ///<summary>
