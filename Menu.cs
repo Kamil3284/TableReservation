@@ -141,7 +141,7 @@ private static int ChosenOption{get;set;}
       }
     case 3://Dodanie rezerwacji
       {
-        Reservation reservation = new Reservation();
+        Reservation.AddReservation();
         Menu.BackToMenu();
         break;
       }
@@ -151,10 +151,9 @@ private static int ChosenOption{get;set;}
         Menu.BackToMenu();
         break;
       }
-    case 5:
+    case 5://Wyświetlanie wszystkich rezerwacji
       {
         Reservation.ShowReservations();
-        Menu.BackToMenu();
         break;
       }
     case 6://Wyświetlanie wszystkich stolików

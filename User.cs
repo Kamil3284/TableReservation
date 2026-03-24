@@ -64,7 +64,19 @@ public class User
       Console.WriteLine("Podaj nazwę użytkownika:");
       string userName = Console.ReadLine();
       Console.WriteLine("Podaj hasło:");
-      string password = Console.ReadLine();
+      string password = "";
+      ConsoleKeyInfo key;
+      do
+      {
+        key = Console.ReadKey(true);
+        if (key.Key != ConsoleKey.Enter)
+        {
+          password += key.KeyChar;
+        }
+        Console.Write("*");
+        
+      }
+      while (key.Key != ConsoleKey.Enter);
       User matchedUser = null;
       foreach (var user in User.Users)
       {
@@ -78,7 +90,7 @@ public class User
       if (matchedUser != null)
       {
         LoggedUser = matchedUser;
-        Console.WriteLine("Zalogowano pomyślnie.");
+        Console.WriteLine("\n\nZalogowano pomyślnie.");
         Console.ReadKey();
         Console.Clear();
         Menu.ShowMenu();

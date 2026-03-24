@@ -115,7 +115,7 @@ public class Table
     public static void RemoveTableCompletely()
     {
         Console.WriteLine("Który stolik chcesz usunąć? Uwaga! Stolik zostanie trwale usunięty!");
-        ShowAllTables(Tables);
+        Console.WriteLine(ShowAllTables(Tables));
         int tableNumber = Convert.ToInt32(Console.ReadLine()) - 1;
         RemoveTableCompletely(Tables[tableNumber]);
         Console.WriteLine("Stolik został usunięty.");
@@ -172,7 +172,7 @@ public class Table
             }
             return output;
         }
-        else return String.Empty;
+        else return "Brak stolików do wyświetlenia.";
     }
 
   ///<summary>
