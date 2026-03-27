@@ -17,6 +17,11 @@ public class User
       User user = new User();
     }
 
+  
+    public static string GetUserName(User user)
+    {
+      return user.UserName;
+    }
     ///<summary>
     ///Private constructor for User class. Creates a new user and adds it to the list of users.
     ///</summary>
@@ -68,13 +73,20 @@ public class User
       ConsoleKeyInfo key;
       do
       {
-        key = Console.ReadKey(true);
-        if (key.Key != ConsoleKey.Enter)
+        key = Console.ReadKey(intercept: true);
+        if (key.Key == ConsoleKey.Backspace)
+        {
+          if (password.Length > 0)
+          {
+            Console.Write("\b \b");
+            password = password.Remove(password.Length - 1);
+          }
+        }
+        else if (key.Key != ConsoleKey.Enter)
         {
           password += key.KeyChar;
+          Console.Write("*");
         }
-        Console.Write("*");
-        
       }
       while (key.Key != ConsoleKey.Enter);
       User matchedUser = null;
@@ -97,7 +109,7 @@ public class User
       }
       else
       {
-        Console.WriteLine("Podano niepoprawną nazwę użytkownika lub hasło.");
+        Console.WriteLine("\n\nPodano niepoprawną nazwę użytkownika lub hasło.");
         Login();
       }
     }

@@ -4,8 +4,8 @@ using System.Collections.Generic;
 public class Reservation
 {
     private DateTime TimeOfReservation { get; set; } //Time when the reservation was made
-    private DateOnly ReservationDay { get; set; } //Day of the reservation
-    private TimeOnly ReservationTime { get; set; } //Day of the reservation
+    private DateOnly ReservationDay { get; set; } //Only day of the reservation
+    private TimeOnly ReservationTime { get; set; } //Only time of the reservation
     private Table T { get; set; } //Table class object
     private int NumberOfPeople { get; set; } //Number of people in the reservation
     private string NameOfReserver { get; set; } //Person who made the reservation
@@ -291,7 +291,7 @@ public class Reservation
             {
                 int counter = i + 1;
                 Reservation r = Reservations[i];
-                Console.WriteLine($"Rezerwacja numer {counter}:\nLiczba osób: {r.NumberOfPeople}\nZarezerwowany stolik: {Table.GetSeats(r.T)} osobowy, \nWybrana data i godzina: {r.ReservationDay.ToString("g")} {r.ReservationTime.ToString("t")} \nOsoba rezerwująca: {r.NameOfReserver} \nCzas wykonania rezerwacji: {r.TimeOfReservation.ToString("g")}\nUżytkownik dokonujący rezerwacji: {r.ReservingUser}.\n");
+                Console.WriteLine($"Rezerwacja numer {counter}:\nLiczba osób: {r.NumberOfPeople}\nZarezerwowany stolik: {Table.GetSeats(r.T)} osobowy, \nWybrana data i godzina: {r.ReservationDay.ToString("dd-MM-yyyy")} {r.ReservationTime.ToString("HH:mm")} \nOsoba rezerwująca: {r.NameOfReserver} \nCzas wykonania rezerwacji: {r.TimeOfReservation.ToString("dd-MM-yyyy HH:mm")}\nUżytkownik dokonujący rezerwacji:{User.GetUserName(r.ReservingUser)}.\n");
             }
         }
         Console.WriteLine("\nNaciśnij dowolny klawisz, aby kontynuować.");
