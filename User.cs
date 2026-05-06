@@ -7,7 +7,7 @@ public class User
     private string Password { get; set; }
     public bool IsAdmin { get; private set; }
     internal static List<User> Users = new List<User>();
-    public static User LoggedUser { get; private set; }///<summary>User who's currently logged in</summary>
+    private static User LoggedUser { get; set; }///<summary>User who's currently logged in</summary>
 
     ///<summary>
     ///Public method for adding a new user.
@@ -22,53 +22,46 @@ public class User
     {
       return user.UserName;
     }
+
+    public static User GetLoggedUser()
+    {
+      return LoggedUser;
+    }
     ///<summary>
     ///Private constructor for User class. Creates a new user and adds it to the list of users.
     ///</summary>
     private User()
     {
-      string PasswordRepeated = " ";
-      Console.WriteLine("Rejestracja nowego użytkownika:\nPodaj nazwę użytkownika:");
+      string password, passwordRepeated = " ";
+      Console.WriteLine("Rejestracja nowego użytkownika.\n\nPodaj nazwę użytkownika:");
       UserName = Console.ReadLine();
       Console.WriteLine("Podaj hasło:");
-      Password = Console.ReadLine();
+      password = MaskPassword();
       do
       {
-        Console.WriteLine("Podaj hasło ponownie:");
-        PasswordRepeated = Console.ReadLine();
-        if(PasswordRepeated!=Password)
+        Console.WriteLine("\n\nPodaj hasło ponownie:");
+        passwordRepeated = MaskPassword();
+        if(passwordRepeated!=password)
         {
           Console.WriteLine("Podane hasła nie są identyczne."); 
           Console.Clear();
         }
       }
-      while (PasswordRepeated != Password) ;
-      Console.Clear();
+      while (passwordRepeated != password);
       IsAdmin = false;
-      Console.WriteLine("Użytkownik został dodany pomyślnie.");
       Users.Add(this);
+      Console.Clear();
+      Console.WriteLine("Użytkownik został dodany pomyślnie.");
+      Console.ReadKey();
+      Console.Clear();
+      Menu.LoginMenu();
     }
 
     ///<summary>
-    ///Constructor for User class. Creates a new user and adds it to the list of users.
-    ///</summary>
-    public User(string userName, string password, bool isAdmin = false)
-    {
-      UserName = userName;
-      Password = password;
-      IsAdmin = isAdmin;
-      Users.Add(this);
-    }
-
-
-   ///<summary>
-   ///Logs in a user.
+    ///Masks the password while typing it in the console.
    ///</summary>
-    public static void Login()
+    private static string MaskPassword()
     {
-      Console.WriteLine("Podaj nazwę użytkownika:");
-      string userName = Console.ReadLine();
-      Console.WriteLine("Podaj hasło:");
       string password = "";
       ConsoleKeyInfo key;
       do
@@ -89,31 +82,73 @@ public class User
         }
       }
       while (key.Key != ConsoleKey.Enter);
-      User matchedUser = null;
-      foreach (var user in User.Users)
+      return password;
+    }
+    ///<summary>
+    ///Constructor for User class. Creates a new user and adds it to the list of users.
+    ///</summary>
+    public User(string userName, string password, bool isAdmin = false)
+    {
+      UserName = userName;
+      Password = password;
+      IsAdmin = isAdmin;
+      Users.Add(this);
+    }
+
+
+   ///<summary>
+   ///Logs in a user.
+   ///</summary>
+    public static void Login()
+    {
+      if(LoggedUser != null)
       {
-        if (user.UserName == userName && user.Password == password)
-        {
-          matchedUser = user;
-          break;
-        }
-      }
-      
-      if (matchedUser != null)
-      {
-        LoggedUser = matchedUser;
-        Console.WriteLine("\n\nZalogowano pomyślnie.");
+        Console.WriteLine("Jesteś już zalogowany.");
         Console.ReadKey();
         Console.Clear();
         Menu.ShowMenu();
       }
       else
       {
-        Console.WriteLine("\n\nPodano niepoprawną nazwę użytkownika lub hasło.");
-        Login();
+        Console.WriteLine("Podaj nazwę użytkownika:");
+        string userName = Console.ReadLine();
+        Console.WriteLine("Podaj hasło:");
+        string password = MaskPassword();
+        User matchedUser = null;
+        foreach (var user in Users)
+        {
+          if (user.UserName == userName && user.Password == password)
+          {
+            matchedUser = user;
+            break;
+          }
+        }
+
+        if (matchedUser != null)
+        {
+          LoggedUser = matchedUser;
+          Console.WriteLine("\n\nZalogowano pomyślnie.");
+          Console.ReadKey();
+          Console.Clear();
+          Menu.ShowMenu();
+        }
+        else
+        {
+          Console.WriteLine("\n\nPodano niepoprawną nazwę użytkownika lub hasło.");
+          Console.ReadKey();
+          Console.Clear();
+          Login();
+        }
       }
+      
     }
 
-
-  
+    internal static void LogOut()
+    {
+        LoggedUser = null;
+        if(LoggedUser == null)
+        {
+            Console.WriteLine("Wylogowano pomyślnie.");
+        }
+    }
 }

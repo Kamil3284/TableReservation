@@ -10,16 +10,16 @@ public class Reservation
     private int NumberOfPeople { get; set; } //Number of people in the reservation
     private string NameOfReserver { get; set; } //Person who made the reservation
     public static List<Reservation> Reservations {get; private set;} = new List<Reservation>(); //List of all reservations
-    private User ReservingUser {get; set; } //User who made the reservation
+    private User ReservingUser {get; set; } = new User("defaultUser", "defaultUser"); //User who made the reservation
 
     ///<summary>
     ///Constructor of the Reservation class. Creates new Reservation object.
     ///</summary>
     public Reservation()
     {
-        if(User.LoggedUser != null)
+        if(User.GetLoggedUser() != null)
         {
-            ReservingUser = User.LoggedUser;      
+            ReservingUser = User.GetLoggedUser();      
         }
         else
         {
@@ -30,8 +30,8 @@ public class Reservation
         }
         Console.WriteLine("Na jaki dzień chcesz zarezerwować stolik? (DD/MM/YYYY)");
         //TODO:
-        //Usprawnić, aby nie można było zarezerwować stolika na godzinę, która już minęła, oraz sprawdzić, czy wpisane dane są poprawne. 
-        while(ReservationDay == DateOnly.MinValue)
+        //Usprawnić, aby nie można było zarezerwować stolika na datę, która już minęła, oraz sprawdzić, czy wpisane dane są poprawne. 
+        do
         {
             try
             {
@@ -40,8 +40,13 @@ public class Reservation
             catch
             {
                 Console.WriteLine("Podano niepoprawną datę.");
+                Console.ReadKey();
+                Console.Clear();
+                Console.WriteLine("Podaj datę ponownie (DD/MM/YYYY)");
+                
             }
         }
+        while (ReservationDay.ToDateTime(TimeOnly.MinValue) < DateTime.Today);
         //TODO:
         //Usprawnić, aby nie można było zarezerwować stolika na godzinę, która już minęła, oraz sprawdzić, czy wpisane dane są poprawne. 
         while(ReservationTime == TimeOnly.MinValue)
@@ -90,18 +95,14 @@ public class Reservation
     ///<summary>
     ///Constructor of the Reservation class. Creates new Reservation object.
     ///</summary>
-    public Reservation(Table table, DateOnly reservationDay, TimeOnly reservationTime, int numberOfPeople, string nameOfReserver, User user = null)
+    public Reservation(Table table, DateOnly reservationDay, TimeOnly reservationTime, int numberOfPeople, string nameOfReserver)
     {
         TimeOfReservation = DateTime.Now;
         ReservationDay = reservationDay;
         ReservationTime = reservationTime;
         T = table;
         NumberOfPeople = numberOfPeople;
-        NameOfReserver = nameOfReserver;
-        if(user != null)
-        {
-            ReservingUser = user;
-        }
+        NameOfReserver = nameOfReserver; 
         Table.MoveTable(table, Table.FreeTables, Table.ReservedTables);
         Reservations.Add(this);
         Table.ReserveTable(table);
