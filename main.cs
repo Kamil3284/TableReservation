@@ -13,7 +13,7 @@ partial class Program {
     Reservation reservation = new Reservation(Table.FreeTables[0], new DateOnly(2026,12,5), new TimeOnly(13,20,0), 10, "Marek Bredow");
     Reservation reservation2 = new Reservation(Table.FreeTables[0], new DateOnly(2027,2,27), new TimeOnly(19,10,0), 2, "Piotr Zimowski");
     User user = new User("user", "user");
-    AdminUser admin = new AdminUser("admin", "admin");
+    AdminUser admin = AdminUser.Create("admin", "admin", "!QAZzaq1");
     //Reservation.ShowReservations();
     Menu.LoginMenu();
 
