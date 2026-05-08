@@ -8,6 +8,7 @@ public static class Menu
 
     public static void LoginMenu()
     {
+        ChosenOption = -1;
         do
         {
             try
@@ -16,22 +17,25 @@ public static class Menu
                 Console.WriteLine("1. Zaloguj się");
                 Console.WriteLine("2. Zarejestruj się");
                 Console.WriteLine("0. Wyjdź z programu");
-                ChosenOption = Convert.ToInt32(Console.ReadLine()); 
+                ChosenOption = Convert.ToInt32(Console.ReadLine());
+                if (ChosenOption < 0 || ChosenOption > 2)
+                {
+                    Console.WriteLine("Wybrano niepoprawną opcję. Spróbuj ponownie.");
+                    Console.ReadKey();
+                    Console.Clear();
+                    ChosenOption = -1;
+                }
             }
-            catch(FormatException)
+            catch (FormatException)
             {
                 Console.WriteLine("Należy wybrać jedną z opcji, aby przejść dalej. Spróbuj ponownie.");
                 Console.ReadKey();
                 Console.Clear();
-            }
-            if (ChosenOption <0 || ChosenOption >2)
-            {
-                Console.WriteLine("Wybrano niepoprawną opcję. Spróbuj ponownie.");
-                Console.ReadKey();
-                Console.Clear();
+                ChosenOption = -1;
             }
         }
-        while (ChosenOption != 1 || ChosenOption != 2 || ChosenOption != 0);
+        while (ChosenOption < 0 || ChosenOption > 2);
+
         LoginMenuChoice(ChosenOption);
     }
 

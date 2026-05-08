@@ -16,11 +16,15 @@ public class AdminUser : User
             {
                 throw new UnauthorizedAccessException("Invalid admin code.");
             }
-        if (AdminCount >= MaxAdmins)
+        if (AdminCount++ > MaxAdmins)
             {
                 throw new InvalidOperationException("Maximum number of admins reached.");
             }
-        AdminCount++;
-        return new AdminUser(userName, password);
+        else
+        {
+            AdminCount++;
+            return new AdminUser(userName, password);
+        }
+      
     }
 }
